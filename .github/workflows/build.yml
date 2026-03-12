@@ -244,6 +244,22 @@ jobs:
             flutter create --platforms=linux .
           fi
       
+      - name: Fix CMakeLists.txt variables
+        run: |
+          # Fix variable syntax in CMakeLists.txt - flutter create generates \${VAR} but we need ${VAR}
+          if [ -f "linux/CMakeLists.txt" ]; then
+            echo "Fixing CMakeLists.txt variable syntax..."
+            sed -i 's/\\\${/${/g' linux/CMakeLists.txt
+            sed -i 's/\\\}/}/g' linux/CMakeLists.txt
+            # Also fix flutter subdirectory CMake files if they exist
+            if [ -d "linux/flutter" ]; then
+              find linux/flutter -name "*.cmake" -o -name "CMakeLists.txt" 2>/dev/null | while read f; do
+                sed -i 's/\\\${/${/g' "$f"
+                sed -i 's/\\\}/}/g' "$f"
+              done
+            fi
+          fi
+      
       - name: Get dependencies
         run: flutter pub get
       
