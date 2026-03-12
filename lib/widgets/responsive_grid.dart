@@ -83,7 +83,7 @@ class _GridItemState extends State<_GridItem> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           transform: _isHovered 
-              ? Matrix4.identity()..scale(1.02)
+              ? (Matrix4.identity()..scale(1.02))
               : Matrix4.identity(),
           child: Card(
             clipBehavior: Clip.antiAlias,
