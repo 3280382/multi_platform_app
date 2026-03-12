@@ -42,40 +42,23 @@ jobs:
       
       - name: Build APK
         run: flutter build apk --release --build-name=${{ github.event.inputs.version || '1.0.0' }}
-        continue-on-error: true
       
       - name: Build App Bundle
         run: flutter build appbundle --release --build-name=${{ github.event.inputs.version || '1.0.0' }}
-        continue-on-error: true
-      
-      - name: Check and Upload APK
-        run: |
-          if [ -f "build/app/outputs/flutter-apk/app-release.apk" ]; then
-            echo "APK found, size: $(ls -lh build/app/outputs/flutter-apk/app-release.apk | awk '{print $5}')"
-            exit 0
-          else
-            echo "APK not found"
-            exit 1
-          fi
-        continue-on-error: true
       
       - name: Upload APK
         uses: actions/upload-artifact@v4
-        if: always()
         with:
           name: android-apk
-          path: build/app/outputs/flutter-apk/*.apk
-          if-no-files-found: warn
-          retention-days: 30
+          path: build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
       
       - name: Upload AAB
         uses: actions/upload-artifact@v4
-        if: always()
         with:
           name: android-aab
-          path: build/app/outputs/bundle/release/*.aab
-          if-no-files-found: warn
-          retention-days: 30
+          path: build/app/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
 
   # Web 构建
   build-web:
@@ -95,16 +78,13 @@ jobs:
       
       - name: Build Web
         run: flutter build web --release --build-name=${{ github.event.inputs.version || '1.0.0' }}
-        continue-on-error: true
       
       - name: Upload Web build
         uses: actions/upload-artifact@v4
-        if: always()
         with:
           name: web-build
           path: build/web/
-          if-no-files-found: warn
-          retention-days: 30
+          if-no-files-found: error
 
   # iOS 构建
   build-ios:
@@ -124,16 +104,13 @@ jobs:
       
       - name: Build iOS
         run: flutter build ios --release --no-codesign --build-name=${{ github.event.inputs.version || '1.0.0' }}
-        continue-on-error: true
       
       - name: Upload iOS build
         uses: actions/upload-artifact@v4
-        if: always()
         with:
           name: ios-build
-          path: build/ios/iphoneos/
+          path: build/ios/iphoneos/Runner.app
           if-no-files-found: warn
-          retention-days: 30
 
   # Windows 构建
   build-windows:
@@ -156,16 +133,13 @@ jobs:
       
       - name: Build Windows
         run: flutter build windows --release --build-name=${{ github.event.inputs.version || '1.0.0' }}
-        continue-on-error: true
       
       - name: Upload Windows build
         uses: actions/upload-artifact@v4
-        if: always()
         with:
           name: windows-build
           path: build/windows/x64/runner/Release/
-          if-no-files-found: warn
-          retention-days: 30
+          if-no-files-found: error
 
   # Linux 构建
   build-linux:
@@ -193,13 +167,10 @@ jobs:
       
       - name: Build Linux
         run: flutter build linux --release --build-name=${{ github.event.inputs.version || '1.0.0' }}
-        continue-on-error: true
       
       - name: Upload Linux build
         uses: actions/upload-artifact@v4
-        if: always()
         with:
           name: linux-build
           path: build/linux/x64/release/bundle/
-          if-no-files-found: warn
-          retention-days: 30
+          if-no-files-found: error
