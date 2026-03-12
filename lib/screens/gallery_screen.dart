@@ -102,7 +102,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                         _selectedCategory = category;
                       });
                     },
-                    backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                    backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
                     selectedColor: Theme.of(context).colorScheme.primaryContainer,
                     checkmarkColor: Theme.of(context).colorScheme.primary,
                   ),
