@@ -58,3 +58,9 @@ android {
 flutter {
     source = '../..'
 }
+
+dependencies {
+    // 强制使用兼容的 Androidx 版本
+    implementation("androidx.browser:browser:1.7.0")
+    implementation("androidx.core:core-ktx:1.12.0")
+}
