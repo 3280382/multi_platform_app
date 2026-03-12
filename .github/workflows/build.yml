@@ -379,6 +379,19 @@ jobs:
           path: artifacts/macos
         continue-on-error: true
       
+      - name: Download Web build
+        uses: actions/download-artifact@v4
+        with:
+          name: web-build-${{ github.ref_name }}
+          path: artifacts/web
+        continue-on-error: true
+      
+      - name: Package Web build
+        run: |
+          cd artifacts/web
+          zip -r ../web-build.zip .
+          cd ../..
+      
       - name: Create Multi-Platform Release
         uses: softprops/action-gh-release@v2
         with:
@@ -391,7 +404,7 @@ jobs:
             - `app-release.aab` - Android App Bundle (Google Play)
             
             ### 🌐 Web
-            - 构建文件在 `web-build` 目录中
+            - `web-build.zip` - Web 版本 (可直接解压后用浏览器打开)
             - 可部署到任何静态网站托管服务
             
             ### 🍎 iOS
@@ -422,6 +435,7 @@ jobs:
           files: |
             artifacts/android/*.apk
             artifacts/android/*.aab
+            artifacts/web-build.zip
             artifacts/ios/*.tar.gz
             artifacts/windows/*.zip
             artifacts/linux/*.tar.gz
