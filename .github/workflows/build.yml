@@ -15,7 +15,7 @@ on:
         default: '1.0.0'
 
 env:
-  FLUTTER_VERSION: '3.24.5'
+  FLUTTER_VERSION: '3.19.6'
 
 jobs:
   # Android 构建
@@ -37,27 +37,33 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: 'stable'
       
-      - name: Get dependencies
-        run: flutter pub get
+      - name: Flutter Doctor
+        run: flutter doctor -v
+      
+      - name: Clean and Get dependencies
+        run: |
+          flutter clean
+          flutter pub get
+      
+      - name: Check Android Embedding
+        run: |
+          echo "=== AndroidManifest.xml ==="
+          cat android/app/src/main/AndroidManifest.xml | grep -A2 -B2 "flutterEmbedding"
+          echo ""
+          echo "=== MainActivity.kt ==="
+          cat android/app/src/main/kotlin/com/example/multi_platform_app/MainActivity.kt
       
       - name: Build APK
-        run: flutter build apk --release --build-name=${{ github.event.inputs.version || '1.0.0' }}
+        run: flutter build apk --release
       
       - name: Build App Bundle
-        run: flutter build appbundle --release --build-name=${{ github.event.inputs.version || '1.0.0' }}
+        run: flutter build appbundle --release
       
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: android-apk
           path: build/app/outputs/flutter-apk/app-release.apk
-          if-no-files-found: error
-      
-      - name: Upload AAB
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-aab
-          path: build/app/outputs/bundle/release/app-release.aab
           if-no-files-found: error
 
   # Web 构建
@@ -77,7 +83,7 @@ jobs:
         run: flutter pub get
       
       - name: Build Web
-        run: flutter build web --release --build-name=${{ github.event.inputs.version || '1.0.0' }}
+        run: flutter build web --release
       
       - name: Upload Web build
         uses: actions/upload-artifact@v4
@@ -103,7 +109,7 @@ jobs:
         run: flutter pub get
       
       - name: Build iOS
-        run: flutter build ios --release --no-codesign --build-name=${{ github.event.inputs.version || '1.0.0' }}
+        run: flutter build ios --release --no-codesign
       
       - name: Upload iOS build
         uses: actions/upload-artifact@v4
@@ -132,7 +138,7 @@ jobs:
         run: flutter config --enable-windows-desktop
       
       - name: Build Windows
-        run: flutter build windows --release --build-name=${{ github.event.inputs.version || '1.0.0' }}
+        run: flutter build windows --release
       
       - name: Upload Windows build
         uses: actions/upload-artifact@v4
@@ -166,7 +172,7 @@ jobs:
         run: flutter config --enable-linux-desktop
       
       - name: Build Linux
-        run: flutter build linux --release --build-name=${{ github.event.inputs.version || '1.0.0' }}
+        run: flutter build linux --release
       
       - name: Upload Linux build
         uses: actions/upload-artifact@v4
