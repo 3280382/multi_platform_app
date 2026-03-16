@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  # Android 构建服务
+  build-android:
+    build: .
+    image: flutter-builder:latest
+    container_name: flutter-android-builder
+    volumes:
+      - ./multi_platform_app:/app
+      - flutter-cache:/root/.pub-cache
+    environment:
+      - BUILD_TYPE=apk
+    command: >
+      sh -c "
+        flutter pub get &&
+        flutter build apk --release &&
+        flutter build appbundle --release &&
+        mkdir -p /app/builds/android &&
+        cp /app/build/app/outputs/flutter-apk/app-release.apk /app/builds/android/ &&
+        cp /app/build/app/outputs/bundle/release/app-release.aab /app/builds/android/
+      "
+    profiles: ["android"]
+
+  # Web 构建服务
+  build-web:
+    build: .
+    image: flutter-builder:latest
+    container_name: flutter-web-builder
+    volumes:
+      - ./multi_platform_app:/app
+      - flutter-cache:/root/.pub-cache
+    command: >
+      sh -c "
+        flutter pub get &&
+        flutter build web --release &&
+        mkdir -p /app/builds/web &&
+        cp -r /app/build/web/* /app/builds/web/
+      "
+    profiles: ["web"]
+
+  # Linux 构建服务
+  build-linux:
+    build: .
+    image: flutter-builder:latest
+    container_name: flutter-linux-builder
+    volumes:
+      - ./multi_platform_app:/app
+      - flutter-cache:/root/.pub-cache
+    command: >
+      sh -c "
+        flutter config --enable-linux-desktop &&
+        flutter pub get &&
+        flutter build linux --release &&
+        mkdir -p /app/builds/linux &&
+        cp -r /app/build/linux/x64/release/bundle/* /app/builds/linux/
+      "
+    profiles: ["linux"]
+
+  # 开发环境 (热重载)
+  dev:
+    build: .
+    image: flutter-builder:latest
+    container_name: flutter-dev
+    volumes:
+      - ./multi_platform_app:/app
+      - flutter-cache:/root/.pub-cache
+    ports:
+      - "8080:8080"  # Web 端口
+    command: >
+      sh -c "
+        flutter pub get &&
+        flutter run -d web-server --web-port=8080 --web-hostname=0.0.0.0
+      "
+    profiles: ["dev"]
+
+volumes:
+  flutter-cache:
+    driver: local
