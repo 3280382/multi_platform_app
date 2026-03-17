@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'dart:io';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
