@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+// Import for Android features.
+import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:io';
 
@@ -115,8 +117,6 @@ class _WebViewScreenState extends State<WebViewScreen> {
   }
 
   Widget _buildWebPlatform() {
-    // For web platform, show a message that WebView is not supported
-    // Instead, we'll load the HTML content directly using HtmlElementView
     return const Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -131,12 +131,6 @@ class _WebViewScreenState extends State<WebViewScreen> {
           Text(
             'WebView is not supported on web platform.',
             textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 16),
-          Text(
-            'The ai-chat.html file is in the assets folder\nand can be opened directly in a browser.',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.grey),
           ),
         ],
       ),
