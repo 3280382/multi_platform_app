@@ -1,18 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-// Import for Android features.
-import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:io';
 
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // Platform specific initialization for Android
-  if (!kIsWeb && Platform.isAndroid) {
-    await AndroidWebViewController.setWebContentsDebuggingEnabled(true);
-  }
-  
   runApp(const MyApp());
 }
 
@@ -98,20 +90,6 @@ class _WebViewScreenState extends State<WebViewScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('AI Chat'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        actions: [
-          if (!kIsWeb)
-            IconButton(
-              icon: const Icon(Icons.refresh),
-              onPressed: () {
-                _controller?.reload();
-              },
-            ),
-        ],
-      ),
       body: kIsWeb ? _buildWebPlatform() : _buildMobileDesktop(),
     );
   }
@@ -142,14 +120,16 @@ class _WebViewScreenState extends State<WebViewScreen> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    return Stack(
-      children: [
-        WebViewWidget(controller: _controller!),
-        if (_isLoading)
-          const Center(
-            child: CircularProgressIndicator(),
-          ),
-      ],
+    return SafeArea(
+      child: Stack(
+        children: [
+          WebViewWidget(controller: _controller!),
+          if (_isLoading)
+            const Center(
+              child: CircularProgressIndicator(),
+            ),
+        ],
+      ),
     );
   }
 }
